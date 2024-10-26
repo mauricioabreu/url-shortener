@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16-alpine3.20
+    environment:
+      POSTGRES_DB: shortener
+      POSTGRES_USER: shortener
+      POSTGRES_PASSWORD: shortener123
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+    env_file:
+      - .env
