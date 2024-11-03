@@ -10,40 +10,47 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mauricioabreu/url-shortener/internal/api/handlers"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestShorten(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	tests := []struct {
-		name       string
-		input      handlers.ShortenRequest
-		wantStatus int
-	}{
-		{
-			name:       "valid request",
-			input:      handlers.ShortenRequest{URL: "https://www.shortener.com"},
-			wantStatus: http.StatusOK,
-		},
-		{
-			name:       "invalid url",
-			input:      handlers.ShortenRequest{URL: "not-a-valid-url"},
-			wantStatus: http.StatusBadRequest,
-		},
-	}
+	router := gin.New()
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-			jsonData, _ := json.Marshal(tt.input)
-			c.Request = httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(jsonData))
-			c.Request.Header.Set("Content-Type", "application/json")
+	mockService := handlers.NewMockShortenerService(ctrl)
 
-			handlers.Shorten(c)
+	h := handlers.NewShortenerHandler(mockService)
+	router.POST("/", h.Shorten)
 
-			assert.Equal(t, tt.wantStatus, w.Code)
-		})
-	}
+	t.Run("valid request", func(t *testing.T) {
+		w := httptest.NewRecorder()
+
+		mockService.EXPECT().Shorten(gomock.Any()).Return("https://shortener.com/abc123xy", nil)
+
+		input := handlers.ShortenRequest{URL: "https://www.google.com"}
+		jsonData, _ := json.Marshal(input)
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(jsonData))
+		req.Header.Set("Content-Type", "application/json")
+
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("invalid url", func(t *testing.T) {
+		w := httptest.NewRecorder()
+
+		input := handlers.ShortenRequest{URL: "not-a-valid-url"}
+		jsonData, _ := json.Marshal(input)
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(jsonData))
+		req.Header.Set("Content-Type", "application/json")
+
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
 }

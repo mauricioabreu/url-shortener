@@ -5,7 +5,7 @@ import (
 	"github.com/mauricioabreu/url-shortener/internal/api/server"
 )
 
-func ExposeRoutes(srv *server.Server) {
+func ExposeRoutes(srv *server.Server, shortenerHandler *handlers.ShortenerHandler) {
 	srv.GET("/healthcheck", handlers.DoHealthcheck)
-	srv.POST("/shorten", handlers.Shorten)
+	srv.POST("/shorten", shortenerHandler.Shorten)
 }
