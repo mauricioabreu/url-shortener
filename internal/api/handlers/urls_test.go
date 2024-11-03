@@ -53,4 +53,19 @@ func TestShorten(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
+
+	t.Run("database error", func(t *testing.T) {
+		w := httptest.NewRecorder()
+
+		mockService.EXPECT().Shorten(gomock.Any()).Return("", assert.AnError)
+
+		input := handlers.ShortenRequest{URL: "https://www.google.com"}
+		jsonData, _ := json.Marshal(input)
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(jsonData))
+		req.Header.Set("Content-Type", "application/json")
+
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
 }
