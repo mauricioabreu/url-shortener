@@ -21,3 +21,13 @@ services:
       - db
     env_file:
       - .env
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/app
+    depends_on:
+      - api

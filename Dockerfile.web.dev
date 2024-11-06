@@ -1,0 +1,10 @@
+FROM node:23-alpine3.19
+
+WORKDIR /app
+
+RUN npm install -g npm@latest
+
+COPY docker-entrypoint-web.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/docker-entrypoint-web.sh
+
+ENTRYPOINT [ "docker-entrypoint-web.sh" ]
