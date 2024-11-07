@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mauricioabreu/url-shortener/internal/api/serializers"
+	"go.uber.org/zap"
 )
 
 type ShortenRequest struct {
@@ -18,11 +19,13 @@ type ShortenerService interface {
 
 type ShortenerHandler struct {
 	shortenerService ShortenerService
+	logger           *zap.Logger
 }
 
-func NewShortenerHandler(shortenerService ShortenerService) *ShortenerHandler {
+func NewShortenerHandler(shortenerService ShortenerService, logger *zap.Logger) *ShortenerHandler {
 	return &ShortenerHandler{
 		shortenerService: shortenerService,
+		logger:           logger,
 	}
 }
 
@@ -35,7 +38,8 @@ func (s *ShortenerHandler) Shorten(c *gin.Context) {
 
 	shortenedURL, err := s.shortenerService.Shorten(c.Request.Context(), req.URL)
 	if err != nil {
-		serializers.RespondWithError(c, http.StatusInternalServerError, err.Error())
+		s.logger.Error("Failed to shorten URL", zap.Error(err))
+		serializers.RespondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 

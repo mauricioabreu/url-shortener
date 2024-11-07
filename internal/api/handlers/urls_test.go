@@ -11,6 +11,7 @@ import (
 	"github.com/mauricioabreu/url-shortener/internal/api/handlers"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
+	"go.uber.org/zap"
 )
 
 func TestShorten(t *testing.T) {
@@ -22,8 +23,9 @@ func TestShorten(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockService := handlers.NewMockShortenerService(ctrl)
+	logger, _ := zap.NewDevelopment()
 
-	h := handlers.NewShortenerHandler(mockService)
+	h := handlers.NewShortenerHandler(mockService, logger)
 	router.POST("/", h.Shorten)
 
 	t.Run("valid request", func(t *testing.T) {
