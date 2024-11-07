@@ -29,7 +29,7 @@ func TestShorten(t *testing.T) {
 	t.Run("valid request", func(t *testing.T) {
 		w := httptest.NewRecorder()
 
-		mockService.EXPECT().Shorten(gomock.Any()).Return("https://shortener.com/abc123xy", nil)
+		mockService.EXPECT().Shorten(gomock.Any(), gomock.Any()).Return("https://shortener.com/abc123xy", nil)
 
 		input := handlers.ShortenRequest{URL: "https://www.google.com"}
 		jsonData, _ := json.Marshal(input)
@@ -57,7 +57,7 @@ func TestShorten(t *testing.T) {
 	t.Run("database error", func(t *testing.T) {
 		w := httptest.NewRecorder()
 
-		mockService.EXPECT().Shorten(gomock.Any()).Return("", assert.AnError)
+		mockService.EXPECT().Shorten(gomock.Any(), gomock.Any()).Return("", assert.AnError)
 
 		input := handlers.ShortenRequest{URL: "https://www.google.com"}
 		jsonData, _ := json.Marshal(input)

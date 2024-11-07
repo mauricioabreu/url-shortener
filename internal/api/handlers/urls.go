@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,7 @@ type ShortenRequest struct {
 }
 
 type ShortenerService interface {
-	Shorten(url string) (string, error)
+	Shorten(ctx context.Context, url string) (string, error)
 }
 
 type ShortenerHandler struct {
@@ -32,7 +33,7 @@ func (s *ShortenerHandler) Shorten(c *gin.Context) {
 		return
 	}
 
-	shortenedURL, err := s.shortenerService.Shorten(req.URL)
+	shortenedURL, err := s.shortenerService.Shorten(c.Request.Context(), req.URL)
 	if err != nil {
 		serializers.RespondWithError(c, http.StatusInternalServerError, err.Error())
 		return

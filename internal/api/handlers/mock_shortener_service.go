@@ -10,6 +10,7 @@
 package handlers
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -40,16 +41,16 @@ func (m *MockShortenerService) EXPECT() *MockShortenerServiceMockRecorder {
 }
 
 // Shorten mocks base method.
-func (m *MockShortenerService) Shorten(url string) (string, error) {
+func (m *MockShortenerService) Shorten(ctx context.Context, url string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Shorten", url)
+	ret := m.ctrl.Call(m, "Shorten", ctx, url)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Shorten indicates an expected call of Shorten.
-func (mr *MockShortenerServiceMockRecorder) Shorten(url any) *gomock.Call {
+func (mr *MockShortenerServiceMockRecorder) Shorten(ctx, url any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Shorten", reflect.TypeOf((*MockShortenerService)(nil).Shorten), url)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Shorten", reflect.TypeOf((*MockShortenerService)(nil).Shorten), ctx, url)
 }
