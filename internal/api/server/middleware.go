@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/timeout"
 	"github.com/gin-gonic/gin"
 )
@@ -23,4 +24,13 @@ func timeoutMiddleware(srvTimeout time.Duration) gin.HandlerFunc {
 		}),
 		timeout.WithResponse(timeoutResponse),
 	)
+}
+
+func configureCORS() cors.Config {
+	return cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}
 }

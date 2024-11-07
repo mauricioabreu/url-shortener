@@ -20,7 +20,7 @@ export default function Home() {
     setResult(null);
 
     try {
-      const response = await fetch('http://api:8080/shorten', {
+      const response = await fetch('http://localhost:8080/shorten', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

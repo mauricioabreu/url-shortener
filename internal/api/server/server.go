@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/requestid"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/mauricioabreu/url-shortener/internal/config"
@@ -25,6 +26,8 @@ func New(cfg *config.Config, logger *zap.Logger) *Server {
 	gin.SetMode(gin.ReleaseMode)
 
 	r := gin.New()
+
+	r.Use(cors.New(configureCORS()))
 	r.Use(gin.Recovery())
 	r.Use(requestid.New())
 	r.Use(timeoutMiddleware(cfg.Server.Timeout))

@@ -4,6 +4,7 @@ go 1.23
 
 require (
 	github.com/caarlos0/env/v11 v11.2.2
+	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/requestid v1.0.3
 	github.com/gin-contrib/timeout v1.0.1
 	github.com/gin-contrib/zap v1.1.4
