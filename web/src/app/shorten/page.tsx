@@ -3,8 +3,10 @@
 import { useState, FormEvent } from 'react';
 
 interface ShortenResponse {
-  shortUrl: string;
-  error?: string;
+  success: boolean;
+  data: {
+    shortened_url: string;
+  };
 }
 
 export default function Home() {
@@ -78,9 +80,9 @@ export default function Home() {
           </div>
         )}
 
-        {result && (
+        {result && result.success && (
           <div className="mt-4 p-2 bg-green-100 border border-green-400 text-green-700 rounded">
-            Shortened URL: <a href={result.shortUrl} className="underline">{result.shortUrl}</a>
+            Shortened URL: <a href={result.data.shortened_url} className="underline">{result.data.shortened_url}</a>
           </div>
         )}
       </div>
