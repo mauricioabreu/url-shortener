@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mauricioabreu/url-shortener/internal/api/serializers"
@@ -43,5 +44,10 @@ func (s *ShortenerHandler) Shorten(c *gin.Context) {
 		return
 	}
 
-	serializers.RespondWithSuccess(c, http.StatusOK, "Successfully inserted URL", gin.H{"shortened_url": shortenedURL})
+	responseData := gin.H{
+		"shortened_url": shortenedURL,
+		"long_url":      req.URL,
+		"created_at":    time.Now(),
+	}
+	serializers.RespondWithSuccess(c, http.StatusOK, "Successfully inserted URL", responseData)
 }
